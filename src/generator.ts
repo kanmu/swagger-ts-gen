@@ -355,8 +355,14 @@ export class Generator {
       return this.definitionDir;
     });
     Handlebars.registerHelper("uniquePropertyRefTypes", (schema: TSSchema) => {
-      const types = Object.values(schema.properties).filter(p => p.isRef).map(p => p.type);
-      return Array.from(new Set(types));
+      const pts = (xs: TSSchema["properties"]) =>
+        Object.values(xs)
+          .filter((p) => p.isRef)
+          .map((p) => p.type);
+      const types = pts(schema.properties);
+      const allOfTypes = schema.allOf.map((x) => (x.isRef ? [x.type] : pts(x.properties)));
+
+      return Array.from(new Set(types.concat(...allOfTypes)));
     });
   }
 
