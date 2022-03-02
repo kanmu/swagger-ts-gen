@@ -8,6 +8,20 @@ import { {{this}} } from "./{{this}}";
 import { {{schema.type}} } from "./{{schema.type}}";
 {{/if}}
 
+{{#if schema.allOf }}
+export type {{name}} =
+{{#each schema.allOf}}
+  {{#if isRef}}
+  {{type}} {{#unless @last}}&{{/unless}}
+  {{else}}
+  {
+  {{#each properties}}
+    {{> property}}
+  {{/each}}
+  } {{#unless @last}}&{{/unless}}
+  {{/if}}
+ {{/each}}
+{{else}}
 {{#if schema.isArray}}
   {{#if schema.isRef}}
 export type {{name}} = {{schema.type}}[];
@@ -38,4 +52,5 @@ export interface {{name}} {
   {{/each}}
 }
 {{/ifEmpty}}
+{{/if}}
 {{/if}}
